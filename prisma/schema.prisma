@@ -1,0 +1,117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  INVESTMENT
+  RETURNS
+}
+
+enum CurrencyType {
+  NGN
+  USD
+}
+
+model Parent {
+  id  Int  @id @default(autoincrement())
+  firstName  String
+  lastName  String
+  username  String  @unique
+  email  String  @unique
+  passwordHash  String
+  child  Child[]
+  wallet  Wallet[]
+  goal  Goal[]
+  investment  Investment[]
+}
+
+model Child {
+  id  Int  @id @default(autoincrement())
+  firstName  String
+  lastName  String
+  username  String  @unique
+  email  String?  @unique
+  passwordHash  String
+  parent  Parent  @relation(fields: [parentId], references: [id])
+  parentId  Int
+  goal  Goal[]
+  investments  Investment[]
+  wallet  Wallet[]
+  transaction  Transaction[]
+}
+
+model Goal {
+  id  Int  @id @default(autoincrement())
+  goalName  String
+  startDate  DateTime  @default(now())
+  endDate  DateTime
+  targetAmount  Float
+  child  Child  @relation(fields: [childId], references: [id])
+  childId  Int
+  parent  Parent  @relation(fields: [parentId], references: [id])
+  parentId  Int
+  investments  Investment[]
+}
+
+model Plan {
+  id  Int  @id @default(autoincrement())
+  planName  String
+  returnsPercent  Float
+  investments  Investment[]
+  transactions  Transaction[]
+}
+
+model Investment {
+  id  Int  @id @default(autoincrement())
+  amount  Float
+  dateCreated  DateTime  @default(now())
+  child  Child  @relation(fields: [childId], references: [id])
+  childId  Int
+  parent  Parent  @relation(fields: [parentId], references: [id])
+  parentId  Int
+  plan  Plan  @relation(fields: [planId], references: [id])
+  planId  Int
+  goal  Goal?  @relation(fields: [goalId], references: [id])
+  goalId  Int?
+}
+
+model Wallet {
+  id  Int  @id @default(autoincrement())
+  balance  Float
+  currency  CurrencyType
+  parentId  Int?
+  parent  Parent?  @relation(fields: [parentId], references: [id])
+  childId  Int?
+  child  Child?  @relation(fields: [childId], references: [id])
+  transaction  Transaction[]
+
+  @@unique([parentId, currency])
+  @@unique([childId, currency])
+}
+
+model Transaction {
+  id  Int  @id @default(autoincrement())
+  transactionDate  DateTime  @default(now())
+  description  String
+  amount  Float
+  plan  Plan?  @relation(fields: [planId], references: [id])
+  planId  Int?
+  child  Child?  @relation(fields: [childId], references: [id])
+  childId  Int?
+  wallet  Wallet  @relation(fields: [walletId], references: [id])
+  walletId  Int
+  type  TransactionType
+}
