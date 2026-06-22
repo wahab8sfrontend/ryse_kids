@@ -1,11 +1,17 @@
 import { registerParentSchema } from "../validators/auth.validator.js";
+import { registerParent } from "../services/auth.service.js";
 
-export function registerParent(req, res) {
-  const result = registerParentSchema.safeParse(req.body);
+export async function registerParentController(req, res) {
+  const validationResult = registerParentSchema.safeParse(req.body);
 
-  if (!result.success) {
-    return res.status(400).json({ error: result.error.issues });
-  } else {
-    res.json({ message: "validation successful", data: result.data });
+  if (!validationResult.success) {
+    return res.status(400).json({ error: validationResult.error.issues });
+  }
+
+  try {
+    const newParent = await registerParent(validationResult.data);
+    res.status(201).json(newParent);
+  } catch (err) {
+    res.status(err.statusCode || 500).json({ error: err.message });
   }
 }

@@ -1,6 +1,6 @@
 import express from "express";
 
-import { registerParent } from "./controllers/auth.controller.js";
+import { registerParentController } from "./controllers/auth.controller.js";
 
 const app = express();
 
@@ -10,6 +10,6 @@ app.get("/health", (req, res) => {
 
 app.use(express.json());
 
-app.use(registerParent);
+app.use(registerParentController);
 
 export default app;
