@@ -1,7 +1,16 @@
+// Allows me to use fileSync in peace by resolving to the file itself not wherever Node was launched from.
+import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
 import AppError from "../utils/apperror.js";
 import prisma from "../lib/prisma.js";
 
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const privateKey = readFileSync(join(__dirname, "private.key"));
 
 export async function registerParent(data) {
   const existingParent = await prisma.parent.findFirst({
@@ -29,11 +38,19 @@ export async function registerParent(data) {
     },
   });
 
+  const jwtToken = jwt.sign({ id: newParent.id, role: "parent" }, privateKey, {
+    expiresIn: "7d",
+    algorithm: "RS256",
+  });
+
   return {
-    id: newParent.id,
-    firstName: newParent.firstName,
-    lastName: newParent.lastName,
-    username: newParent.username,
-    email: newParent.email,
+    jwtToken,
+    parent: {
+      id: newParent.id,
+      firstName: newParent.firstName,
+      lastName: newParent.lastName,
+      username: newParent.username,
+      email: newParent.email,
+    },
   };
 }
