@@ -1,7 +1,14 @@
 import express from "express";
 
+import {
+  registerParentController,
+  loginParentController,
+} from "../controllers/auth.controller.js";
+
 const router = express.Router();
 
-import authController from "../controllers/auth.controller.js";
+router.post("/parent/register", registerParentController);
 
-router.post("/api/auth/parent/register", authController.registerParent);
+router.post("/parent/login", loginParentController);
+
+export default router;

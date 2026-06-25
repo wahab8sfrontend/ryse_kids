@@ -28,3 +28,13 @@ export const registerParentSchema = zod.object({
       "Password must include uppercase, lowercase, number, and special character",
     ),
 });
+
+export const loginParentSchema = zod.object({
+  email: zod.email().trim(),
+  password: zod
+    .string()
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/,
+      "Password must include uppercase, lowercase, number, and special character",
+    ),
+});

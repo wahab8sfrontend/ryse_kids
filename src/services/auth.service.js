@@ -38,19 +38,62 @@ export async function registerParent(data) {
     },
   });
 
-  const jwtToken = jwt.sign({ id: newParent.id, role: "parent" }, privateKey, {
-    expiresIn: "7d",
-    algorithm: "RS256",
-  });
+  const registrationJwtToken = jwt.sign(
+    { id: newParent.id, role: "parent" },
+    privateKey,
+    {
+      expiresIn: "7d",
+      algorithm: "RS256",
+    },
+  );
 
   return {
-    jwtToken,
+    registrationJwtToken,
     parent: {
       id: newParent.id,
       firstName: newParent.firstName,
       lastName: newParent.lastName,
       username: newParent.username,
       email: newParent.email,
+    },
+  };
+}
+
+export async function loginParent(data) {
+  const existingParent = await prisma.parent.findUnique({
+    where: { email: data.email },
+  });
+
+  if (!existingParent) {
+    throw new AppError(401, "Invalid email or password");
+  }
+
+  const compareUserPassword = await bcrypt.compare(
+    data.password,
+    existingParent.passwordHash,
+  );
+
+  if (!compareUserPassword) {
+    throw new AppError(401, "Invalid email or password");
+  }
+
+  const loginJwtToken = jwt.sign(
+    { id: existingParent.id, role: "parent" },
+    privateKey,
+    {
+      expiresIn: "7d",
+      algorithm: "RS256",
+    },
+  );
+
+  return {
+    loginJwtToken,
+    parent: {
+      id: existingParent.id,
+      firstName: existingParent.firstName,
+      lastName: existingParent.lastName,
+      username: existingParent.username,
+      email: existingParent.email,
     },
   };
 }
