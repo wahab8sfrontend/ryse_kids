@@ -1,6 +1,6 @@
 import express from "express";
-
 import authRoutes from "./routes/auth.routes.js";
+import childrenRoutes from "./routes/children.routes.js";
 
 const app = express();
 
@@ -11,5 +11,6 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/children", childrenRoutes);
 
 export default app;

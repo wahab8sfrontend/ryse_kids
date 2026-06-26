@@ -3,4 +3,4 @@ node_modules/
 /src/generated
 codedump.js
 src/services/private.key
-src/services/public.key
+src/middleware/public.key
