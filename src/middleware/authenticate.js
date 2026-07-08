@@ -9,6 +9,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const publicKey = readFileSync(join(__dirname, "public.key"));
 
 export function authenticate(req, res, next) {
+  // Learning sake!
+  console.log(req.headers);
+
   if (!req.headers.authorization) {
     return res.status(401).json({ error: "Unauthorized user!" });
   }

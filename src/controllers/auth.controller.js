@@ -27,8 +27,9 @@ export async function loginParentController(req, res) {
   }
 
   try {
+    // Zod returns data object if successful and returns error object if not.
     const parentAccess = await loginParent(validationResult.data);
-    res.status(201).json(parentAccess);
+    res.status(200).json(parentAccess);
   } catch (err) {
     res.status(err.statusCode || 500).json({ error: err.message });
   }

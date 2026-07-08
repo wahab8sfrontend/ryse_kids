@@ -15,7 +15,7 @@ export const registerParentSchema = zod.object({
   username: zod
     .string()
     .trim()
-    .min(1, "Username is required")
+    .min(3, "Username is required")
     .max(15, "Username cannot be more than 15 characters"),
   email: zod.email().trim(),
   password: zod
@@ -32,7 +32,7 @@ export const registerChildSchema = zod.object({
   username: zod
     .string()
     .trim()
-    .min(1, "Username is required")
+    .min(3, "Username is required")
     .max(15, "Username cannot be more than 15 characters"),
   email: zod.email().trim().optional(),
   password: zod
@@ -52,7 +52,7 @@ export const loginChildSchema = zod.object({
   username: zod
     .string()
     .trim()
-    .min(1, "Username is required")
+    .min(3, "Username is required")
     .max(15, "Username cannot be more than 15 characters"),
   password: zod.string().min(1, "Password is required"),
 });
