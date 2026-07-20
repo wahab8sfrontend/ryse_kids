@@ -18,6 +18,8 @@ enum TransactionType {
   WITHDRAWAL
   INVESTMENT
   RETURNS
+  TRANSFER_IN
+  TRANSFER_OUT
 }
 
 enum CurrencyType {
