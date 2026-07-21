@@ -2,7 +2,11 @@ import {
   fundWalletSchema,
   allocateToChildSchema,
 } from "../validators/wallet.validator.js";
-import { fundWallet, getWalletBalance } from "../services/wallet.service.js";
+import {
+  fundWallet,
+  getWalletBalance,
+  getWalletTransactions,
+} from "../services/wallet.service.js";
 import { allocateToChild } from "../services/allocate.js";
 
 export async function fundWalletController(req, res) {
@@ -44,12 +48,30 @@ export async function getWalletController(req, res) {
   }
 
   try {
-    const getBalance = await getWalletBalance(
+    const balance = await getWalletBalance(
       req.params.id,
       req.user.id,
       req.user.role,
     );
-    res.status(200).json(getBalance);
+    res.status(200).json(balance);
+  } catch (err) {
+    res.status(err.statusCode || 500).json({ error: err.message });
+  }
+}
+
+export async function getWalletTransactionsController(req, res) {
+  if (!req.params.id) {
+    return res.status(400).json({ error: "Bad request" });
+  }
+
+  try {
+    const transactions = await getWalletTransactions(
+      req.params.id,
+      req.user.id,
+      req.user.role,
+      req.query,
+    );
+    res.status(200).json(transactions);
   } catch (err) {
     res.status(err.statusCode || 500).json({ error: err.message });
   }

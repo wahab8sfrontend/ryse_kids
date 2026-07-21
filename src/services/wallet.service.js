@@ -63,15 +63,6 @@ export async function fundWallet(data, parentId) {
   return newDeposit;
 }
 
-/* 
-1. Export async function with (id)
-
-2. Get parent wallet balance
-
-3. Get Child wallet balance
-
-*/
-
 export async function getWalletBalance(walletId, userId, userRole) {
   const id = parseInt(walletId);
 
@@ -91,7 +82,7 @@ export async function getWalletBalance(walletId, userId, userRole) {
   }
 
   if (!wallet) {
-    throw new AppError(404, "wallet not found, access denied");
+    throw new AppError(404, "Wallet not found, access denied!");
   }
 
   return {
@@ -99,4 +90,43 @@ export async function getWalletBalance(walletId, userId, userRole) {
     balance: wallet.balance,
     currency: wallet.currency,
   };
+}
+
+export async function getWalletTransactions(walletId, userId, userRole, query) {
+  const id = parseInt(walletId);
+
+  let wallet;
+
+  if (userRole === "parent") {
+    wallet = await prisma.wallet.findFirst({
+      where: {
+        id,
+        OR: [{ parentId: userId }, { child: { parentId: userId } }],
+      },
+    });
+  } else if (userRole === "child") {
+    wallet = await prisma.wallet.findFirst({
+      where: { id, childId: userId },
+    });
+  }
+
+  if (!wallet) {
+    throw new AppError(404, "Wallet not found, access denied!");
+  }
+
+  const transactions = await prisma.transaction.findMany({
+    where: {
+      walletId: id,
+      ...(query.type && { type: query.type }),
+    },
+    orderBy: { transactionDate: "desc" },
+  });
+
+  return transactions.map((transaction) => ({
+    id: transaction.id,
+    date: transaction.transactionDate,
+    description: transaction.description,
+    amount: transaction.amount,
+    type: transaction.type,
+  }));
 }

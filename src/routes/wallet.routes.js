@@ -5,6 +5,7 @@ import {
   fundWalletController,
   getWalletController,
   transferFundController,
+  getWalletTransactionsController,
 } from "../controllers/wallet.controller.js";
 
 const router = express.Router();
@@ -19,5 +20,7 @@ router.post(
 );
 
 router.get("/:id", authenticate, getWalletController);
+
+router.get("/:id/transactions", authenticate, getWalletTransactionsController);
 
 export default router;
