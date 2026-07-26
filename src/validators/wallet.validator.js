@@ -32,7 +32,3 @@ export const allocateToChildSchema = zod
       message: "Minimum transfer amount is ₦1000 for NGN or $1 for USD",
     },
   );
-
-// export const getBalanceSchema = zod.object({
-//   currency: zod.enum(["NGN", "USD"]),
-// });
