@@ -22,6 +22,7 @@ export async function createInvestment(data, childId) {
     throw new AppError(404, "You do not have a wallet in this currency");
   }
 
+  // Since goal is optional in the request we first have to check if it exists
   if (data.goalId) {
     const goal = await prisma.goal.findFirst({
       where: { childId: childId, id: data.goalId },

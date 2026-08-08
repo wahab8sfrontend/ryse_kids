@@ -2,6 +2,7 @@ import AppError from "../utils/apperror.js";
 import jwt from "jsonwebtoken";
 
 // Allows me to use fileSync in peace by resolving to the file itself not wherever Node was launched from.
+
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
